@@ -294,9 +294,8 @@ function launchHearts() {
 
 // ===== Typewriter Effect =====
 function typeWriterEffect() {
-    const msg1 = "On this beautiful day, Faith, I want you to know how incredibly special you are to me. Every moment with you feels like a gift, and today we celebrate the day the world became brighter because you were born.";
-    // added a short romantic happy birthday line after the original message
-    const msg2 = "May your year be filled with endless joy, laughter, and al lol theve your heart can hold. Here's to another year of beautiful memories together, Faith. Happy birthday, my love – may your day be as magical and enchanting as you are.";
+    const msg1 = "On this beautiful day, Sandra, I just want to remind you how incredibly special you are to me. Being around you feels like a quiet kind of happiness. You’ve been there for me in moments when everything felt heavy, when it seemed like the world was closing in—and somehow, you always found a way to make me feel seen, understood, and cared for. That means more to me than I can ever fully put into words..";
+    const msg2 = "I really appreciate how understanding you are. The way you make me smile… it’s something really special to me. You bring so much light and happiness into my life, and talking to you just makes everything feel brighter and easier..";
     
     const el1 = document.getElementById('messageText1');
     const el2 = document.getElementById('messageText2');
