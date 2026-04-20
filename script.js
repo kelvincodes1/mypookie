@@ -44,30 +44,6 @@ const introInterval = setInterval(() => {
 }, 1000);
 // ===== Autoplay Unlock =====
 // Browsers block autoplay. This function tries to play on the first user interaction (click/scroll).
-function initAutoPlayUnlock() {
-    const tryPlay = () => {
-        if (!isPlaying) {
-            audio.play()
-                .then(() => {
-                    isPlaying = true;
-                    updateMusicIcon(true);
-                    // Remove listeners after successful play
-                    document.removeEventListener('click', tryPlay);
-                    document.removeEventListener('scroll', tryPlay);
-                    document.removeEventListener('touchstart', tryPlay);
-                })
-                .catch(e => console.log("Autoplay still waiting for interaction"));
-        }
-    };
-
-    // Add listeners to the whole document
-    document.addEventListener('click', tryPlay);
-    document.addEventListener('scroll', tryPlay);
-    document.addEventListener('touchstart', tryPlay);
-    
-    // Attempt immediately (might work if cached or allowed)
-    tryPlay();
-}
 
 function updateMusicIcon(playing) {
     const iconPlay = document.querySelector('.icon-play');
@@ -84,19 +60,16 @@ function updateMusicIcon(playing) {
 // ===== Music Toggle =====
 function initMusicToggle() {
     const toggleBtn = document.getElementById('musicToggle');
+
     toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent triggering the document click listener immediately
-        if (isPlaying) {
-            audio.pause();
+        e.stopPropagation(); // ✅ VERY IMPORTANT
+
+        if (audio.paused) {git
+            isPlaying = false;
             updateMusicIcon(false);
-        } else {
-           fadeInAudio(); 
-            updateMusicIcon(true);
         }
-        isPlaying = !isPlaying;
     });
 }
-
 // ===== Floating Hearts =====
 function initFloatingHearts() {
     const container = document.getElementById('heartsContainer');
