@@ -2,6 +2,8 @@
 let isPlaying = false;
 const audio = document.getElementById('bgMusic');
 function fadeInAudio() {
+  if (!audio.paused) return; // 🛑 prevent restarting
+
   audio.volume = 0;
   audio.play();
 
