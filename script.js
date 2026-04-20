@@ -1,11 +1,10 @@
 // ===== Configuration & State =====
 let isPlaying = false;
-let isBlown = false;
 const audio = document.getElementById('bgMusic');
 function fadeInAudio() {
   audio.volume = 0;
-  fadeInAudio();
-  
+  audio.play();
+
   let vol = 0;
   const fade = setInterval(() => {
     if (vol < 1) {
@@ -17,20 +16,16 @@ function fadeInAudio() {
   }, 100);
 }
 // ===== Initialize on DOM Load =====
-document.addEventListener("click", (e) => {
-    launchConfetti();
+document.addEventListener("DOMContentLoaded", () => {
     initFloatingHearts();
     initSparkles();
-    initCandleInteraction();
+    initGiftInteraction();
     initMusicToggle();
     initParallax();
     initScrollAnimations();
-    initAutoPlayUnlock();
     initWishButton();
-
-    // display the special message immediately on page enter
-    typeWriterEffect();
 });
+
 let introCount = 3;
 const introEl = document.getElementById("introCount");
 const introScreen = document.getElementById("intro");
@@ -157,48 +152,39 @@ document.querySelectorAll(".photo").forEach(img => {
     document.body.appendChild(overlay);
   });
 });
-setTimeout(() => {
-  typeWriter(el2, msg2, 0, null);
-}, 800);
+
 function secret() {
   launchConfetti();
   alert("You mean the world to me 💖");
 }
-// ===== Candle & Wish Interaction =====
-function initCandleInteraction() {
-    const flame = document.getElementById('flame');
-    const glow = document.getElementById('glow');
+function initGiftInteraction() {
+    const gift = document.getElementById('giftWrapper');
     const hint = document.getElementById('clickHint');
-    const cakeWrapper = document.getElementById('cakeWrapper');
-    const smoke = document.createElement("div");
-    smoke.className = "smoke";
-    flame.appendChild(smoke);
-    setTimeout(() => smoke.remove(), 1500);
 
-    cakeWrapper.addEventListener('click', (e) => {
-        if (!isBlown) {
-            // 1. Blow out candle and hide hint
-            flame.classList.add('blown');
-            glow.classList.add('blown');
-            hint.classList.add('hidden');
-            
-            // 2. Trigger confetti only (message shown on load)
-            launchConfetti();
-            
-            // 3. Start music if not already playing
-            if (!isPlaying) {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    updateMusicIcon(true);
-                }).catch(e => console.log("Music play failed"));
-            }
-            
-            // leave candle blown indefinitely until page reload
-            isBlown = true;
-        }
+    gift.addEventListener('click', () => {
+
+        if (gift.classList.contains('open')) return;
+
+        // 🎁 open animation
+        gift.classList.add('open');
+        hint.classList.add('hidden');
+
+        // 🎵 start music (smooth)
+        fadeInAudio();
+        isPlaying = true;
+        updateMusicIcon(true);
+
+        // 💖 hearts burst FROM gift
+        launchHearts();
+
+        // 💬 reveal message smoothly
+        const msg = document.getElementById('messageSection');
+        msg.style.opacity = "1";
+        msg.style.transform = "translateY(0)";
+
+        typeWriterEffect();
     });
 }
-
 // ===== Confetti Effect =====
 function launchConfetti() {
     const canvas = document.getElementById('confettiCanvas');
@@ -263,32 +249,33 @@ function launchConfetti() {
 
 // ===== Launch Hearts (Burst Effect) =====
 function launchHearts() {
-    const heartCount = 30;
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    
-    for (let i = 0; i < heartCount; i++) {
+    const gift = document.getElementById('giftWrapper');
+    const rect = gift.getBoundingClientRect();
+
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    for (let i = 0; i < 25; i++) {
         setTimeout(() => {
             const heart = document.createElement('div');
             heart.className = 'wish-heart';
             heart.innerHTML = `<svg viewBox="0 0 32 32"><path d="M16 28.72a3 3 0 0 1-2.13-.88L3.57 17.54a8.72 8.72 0 0 1-2.52-6.25 8.06 8.06 0 0 1 8.14-8A8.06 8.06 0 0 1 16 6.17a8.06 8.06 0 0 1 6.81-2.87 8.06 8.06 0 0 1 8.14 8 8.72 8.72 0 0 1-2.52 6.25l-10.3 10.3a3 3 0 0 1-2.13.88z"/></svg>`;
-            
-            // Calculate random burst direction
-            const angle = (Math.PI * 2 * i) / heartCount;
+
+            const angle = Math.random() * Math.PI * 2;
             const distance = 150 + Math.random() * 100;
+
             const tx = Math.cos(angle) * distance;
-            const ty = Math.sin(angle) * distance - 200; // Extra upward movement
-            
+            const ty = Math.sin(angle) * distance - 200;
+
             heart.style.left = centerX + 'px';
             heart.style.top = centerY + 'px';
             heart.style.setProperty('--tx', tx + 'px');
             heart.style.setProperty('--ty', ty + 'px');
-            
+
             document.body.appendChild(heart);
-            
-            // Remove heart after animation completes
+
             setTimeout(() => heart.remove(), 2500);
-        }, i * 30);
+        }, i * 40);
     }
 }
 
@@ -333,8 +320,28 @@ function initParallax() {
 // ===== Wish Button =====
 function initWishButton() {
     const wishBtn = document.getElementById('wishBtn');
+
     wishBtn.addEventListener('click', () => {
-        launchHearts();
+
+        // 💥 stronger heart explosion
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => launchHearts(), i * 200);
+        }
+
+        // ✨ glow effect on button
+        wishBtn.style.boxShadow = "0 0 40px rgba(212,165,165,0.9)";
+        wishBtn.style.transform = "scale(1.1)";
+
+        // 💬 small surprise message
+        setTimeout(() => {
+            alert("You deserve all the love in the world 💖");
+        }, 400);
+
+        // reset
+        setTimeout(() => {
+            wishBtn.style.boxShadow = "";
+            wishBtn.style.transform = "";
+        }, 1000);
     });
 }
 function initScrollAnimations() {
